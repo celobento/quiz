@@ -2,7 +2,9 @@
 import QuestaoModel from "@/model/questao";
 import { Questao } from "../components/Questao";
 import RespostaModel from "@/model/resposta";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Botao from "@/components/Botao";
+import Questionario from "@/components/Questionario";
 
 const questaoMock = new QuestaoModel(1, "Melhor Cor? ", [
   RespostaModel.errada("verde"),
@@ -11,9 +13,38 @@ const questaoMock = new QuestaoModel(1, "Melhor Cor? ", [
   RespostaModel.certa("preto"),
 ])
 
+const BASE_URL = 'http://localhost:3000/api'
+
 export default function Home() {
 
   const [questao, setQuestao] = useState(questaoMock)
+  const [idsDasQuestoes, setIdsDasQuestoes] = useState<number[]>([])
+  const questaoRef = useRef<QuestaoModel>()
+
+  useEffect(() => {
+    carregarIdsDasQuestoes()
+  }, [])
+
+  useEffect(() => {
+    idsDasQuestoes.length > 0 && carregarQuestao(idsDasQuestoes[0])
+  }, [idsDasQuestoes])
+
+  async function carregarIdsDasQuestoes() {
+    const resp = await fetch(`${BASE_URL}/questionario`)
+    const idsDasQuestoes = await resp.json()
+    setIdsDasQuestoes(idsDasQuestoes)
+  }
+
+  async function carregarQuestao(id: number) {
+    const resp = await fetch(`${BASE_URL}/questoes/${id}`)
+    const json = await resp.json()
+    const novaQuestao = QuestaoModel.criarUsandoObjeto(json)
+    setQuestao(novaQuestao)
+  }
+
+  useEffect(() => {
+    questaoRef.current = questao
+  }, [questao])
 
   function respostaFornecida(indice: number) {
     console.log(indice)
@@ -21,21 +52,26 @@ export default function Home() {
   }
 
   function tempoEsgotado() {
-    if(questao.naoRespondida) {
-      setQuestao(questao.responderCom(-1))
+    if(questaoRef.current.naoRespondida) {
+      setQuestao(questaoRef.current.responderCom(-1))
     }
   }
 
+  function questaoRespondida(questaoRespondida: QuestaoModel) {
+    setQuestao(questaoRespondida)
+  }
+
+  function idPraproximoPasso() {
+
+  }
+
   return (
-    <div style={{
-      display:'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh'
-    }}>
-      <Questao valor={questao} 
-               respostaFornecida={respostaFornecida}
-               tempoEsgotado={tempoEsgotado} />
-    </div>
+    
+      <Questionario 
+        questao={questao} 
+        ultima={true} 
+        questaoRespondida={questaoRespondida} 
+        irPraProximoPasso={idPraproximoPasso}/>
+   
   )
 }
