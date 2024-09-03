@@ -1,0 +1,69 @@
+.resposta {
+    display: flex;
+    height: 100px;
+    margin: 10px;
+    width: 80%;
+    min-width: 500px;
+}
+
+.letra {
+    display: flex;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    border-radius: 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-right: 20px;
+    color: #fff;
+}
+
+.valor {
+    font-size: 1.3rem;
+    font-weight: 700;    
+}
+
+.conteudoResposta {
+    position: relative;
+    display: flex;
+    flex: 1;
+}
+
+.frente, .verso {
+    position: absolute;
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.frente {
+    border-radius: 12px;
+    padding: 15px;
+    align-items: center;
+    background-color: #fff;
+    color: #000;
+}
+
+/* > div para trabalhar com as divs dentro do verso
+esse flex 1 cresce até o limite*/
+.verso > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    border-radius: 12px;
+}
+
+.certa {
+    background-color: #2baa6d;
+}
+
+.errada {
+    background-color: #e44a4c;
+}
+
+.certa .valor .errada .valor {
+    font-size: 1.5rem;
+}
